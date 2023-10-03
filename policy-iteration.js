@@ -9,10 +9,9 @@ const actions = ["up", "down", "left", "right"];
 
 
 
-
 //2. Policy Evaluation
 let delta = 0;
-while (delta < 0.1) {
+while (delta < 1) {
   for (let i = 0; i < S.length; i++) {
     for (let j = 0; j < S[i].length; j++) {
       if ((i != 0 || j != 0) && (i != 3 || j != 3)) {
@@ -20,11 +19,12 @@ while (delta < 0.1) {
         S[i][j].v = calculate_V(S[i][j]);
         const value_def = Math.abs(v - S[i][j].v);
         delta = delta > value_def ? delta : value_def;
+        console.log(S[i][j].v)
       }
+
     }
   }
 }
-
 
 
 function calculate_V(s) {
@@ -33,12 +33,13 @@ function calculate_V(s) {
     const p = 1;
     const reward = -1;
     const next_state_v = get_next_state_v(s, a);
-    v += p + reward + next_state_v;
+    v += 0.25 * p * (reward + next_state_v);
   });
   return v;
 }
 
-function get_next_state_v(s, a) {
+
+function get_next_state(s, a) {
   let state = null;
   switch (a) {
     case "up":
@@ -54,7 +55,12 @@ function get_next_state_v(s, a) {
       state = get_state_by_id(s.id + 1);
       break;
   }
+  if (!state) return s;
+  return state;
+}
 
+function get_next_state_v(s, a) {
+  let state = get_next_state(s, a);
   if (state) return state.v;
   else return s.v;
 }
@@ -65,9 +71,9 @@ function get_state_by_id(id) {
     const s = i.find(state => state.id == id);
     if (s != null) state = s;
   })
-
-
   return state;
 }
 
-function get_reward(s, a) { }
+function get_reward(s, a) {
+  return get_next_state(s, a).id == 0 || get_next_state(s, a).id == 14 ? 0 : -1;
+}

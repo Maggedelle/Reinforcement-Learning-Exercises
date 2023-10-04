@@ -22,29 +22,29 @@ const S = [
     { v: -12, id: 12 },
     { v: -13, id: 13 },
     { v: -14, id: 14 },
-    { v: 0, id: 14 },
+    { v: 0, id: 15 },
   ],
 ];
 const actions = ["up", "down", "left", "right"];
 
 //2. Policy Evaluation
 let delta = 0;
-let last_delta = null;
-while (last_delta == null || Math.abs(delta - last_delta) > 0.2) {
-  last_delta = delta;
+while (delta == 0 || delta >= 0.0001) {
+  delta = 0;
   for (let i = 0; i < S.length; i++) {
     for (let j = 0; j < S[i].length; j++) {
-      if ((i != 0 || j != 0) && (i != 3 || j != 3)) {
+      if (S[i][j].id != 0 && S[i][j].id != 15) {
         v = S[i][j].v;
         S[i][j].v = calculate_V(S[i][j]);
         const value_def = Math.abs(v - S[i][j].v);
         delta = delta > value_def ? delta : value_def;
-        console.log(S[0][2]);
       }
     }
+    console.log(delta);
   }
 }
 
+console.log(S);
 function calculate_V(s) {
   let v = 0;
   actions.map((a) => {

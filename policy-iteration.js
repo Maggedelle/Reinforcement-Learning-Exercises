@@ -26,34 +26,88 @@ const S = [
   ],
 ];
 const actions = ["up", "down", "left", "right"];
+const policy = [
+  ["up"],
+  ["down"],
+  ["left"],
+  ["right"],
+  ["up"],
+  ["down"],
+  ["left"],
+  ["right"],
+  ["up"],
+  ["down"],
+  ["left"],
+  ["right"],
+  ["up"],
+  ["down"],
+  ["left"],
+  ["right"],
+];
+
+let terminate = false;
+
+while (!terminate) {
+  console.log("Running Policy Evaluation");
+  policy_evaluation();
+  console.log("Running Policy Improvement");
+  let policy_stable = policy_improvement();
+  if (policy_stable) terminate = true;
+}
+
+console.log(policy);
 
 //2. Policy Evaluation
-let delta = 0;
-while (delta == 0 || delta >= 0.0001) {
-  delta = 0;
-  for (let i = 0; i < S.length; i++) {
-    for (let j = 0; j < S[i].length; j++) {
-      if (S[i][j].id != 0 && S[i][j].id != 15) {
-        v = S[i][j].v;
-        S[i][j].v = calculate_V(S[i][j]);
-        const value_def = Math.abs(v - S[i][j].v);
-        delta = delta > value_def ? delta : value_def;
+function policy_evaluation() {
+  let delta = null;
+  while (delta == null || delta >= 1.1) {
+    delta = 0;
+    for (let i = 0; i < S.length; i++) {
+      for (let j = 0; j < S[i].length; j++) {
+        if (S[i][j].id != 0 && S[i][j].id != 15) {
+          v = S[i][j].v;
+          S[i][j].v = calculate_V(S[i][j]);
+          const value_def = Math.abs(v - S[i][j].v);
+          delta = delta > value_def ? delta : value_def;
+        }
       }
     }
-    console.log(delta);
   }
 }
 
+//3. Policy Improvement
+function policy_improvement() {
+  let policy_stable = true;
+  for (let i = 0; i < S.length; i++) {
+    for (let j = 0; j < S[i].length; j++) {
+      if (S[i][j].id != 0 && S[i][j].id != 15) {
+        let old_action = policy[S[i][j].id];
+        let q = null;
+        actions.map((action) => {
+          q_temp = calculate_Q(S[i][j], action);
+          if (q == null || q_temp > q) {
+            q = q_temp;
+            policy[S[i][j].id] = action;
+          }
+        });
+        if (old_action != policy[S[i][j].id]) {
+          policy_stable = false;
+        }
+      }
+    }
+  }
+  return policy_stable;
+}
+
 console.log(S);
+
+function calculate_Q(s, a) {
+  let next_state = get_next_state(s, a);
+  return 1 * (-1 + next_state.v);
+}
 function calculate_V(s) {
-  let v = 0;
-  actions.map((a) => {
-    const p = 1;
-    const reward = -1;
-    const next_state_v = get_next_state_v(s, a);
-    v += 0.25 * p * (reward + next_state_v);
-  });
-  return v;
+  let next_state = get_next_state(s, policy[s.id]);
+  return 1 * (-1 + next_state.v);
 }
 
 function get_next_state(s, a) {

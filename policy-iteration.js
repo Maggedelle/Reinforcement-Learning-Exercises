@@ -27,22 +27,22 @@ const S = [
 ];
 const actions = ["up", "down", "left", "right"];
 const policy = [
-  ["up"],
-  ["down"],
-  ["left"],
-  ["right"],
-  ["up"],
-  ["down"],
-  ["left"],
-  ["right"],
-  ["up"],
-  ["down"],
-  ["left"],
-  ["right"],
-  ["up"],
-  ["down"],
-  ["left"],
-  ["right"],
+  "up",
+  "down",
+  "left",
+  "right",
+  "up",
+  "down",
+  "left",
+  "right",
+  "up",
+  "down",
+  "left",
+  "right",
+  "up",
+  "down",
+  "left",
+  "right",
 ];
 
 let terminate = false;
